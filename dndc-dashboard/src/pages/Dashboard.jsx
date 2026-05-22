@@ -10,11 +10,13 @@ const Dashboard = () => {
     useState(window.innerWidth < 768);
 
   const storageKey = "globalSheets";
-
   const activityKey = "activityLogs";
 
-  const [sheetName, setSheetName] = useState("");
-  const [sheetLink, setSheetLink] = useState("");
+  const [sheetName, setSheetName] =
+    useState("");
+
+  const [sheetLink, setSheetLink] =
+    useState("");
 
   const [category, setCategory] =
     useState("Attendance Sheet");
@@ -28,11 +30,11 @@ const Dashboard = () => {
   const [selectedSheets, setSelectedSheets] =
     useState([]);
 
-  const [openedSheet, setOpenedSheet] =
-    useState(null);
-
   const [drawerOpen, setDrawerOpen] =
     useState(false);
+
+  const [openedSheet, setOpenedSheet] =
+    useState(null);
 
   const [sheets, setSheets] = useState(() => {
 
@@ -51,10 +53,15 @@ const Dashboard = () => {
 
     });
 
+  // RESPONSIVE
   useEffect(() => {
 
     const handleResize = () => {
-      setIsMobile(window.innerWidth < 768);
+
+      setIsMobile(
+        window.innerWidth < 768
+      );
+
     };
 
     window.addEventListener(
@@ -70,6 +77,7 @@ const Dashboard = () => {
 
   }, []);
 
+  // SAVE SHEETS
   useEffect(() => {
 
     localStorage.setItem(
@@ -79,6 +87,7 @@ const Dashboard = () => {
 
   }, [sheets]);
 
+  // SAVE ACTIVITY
   useEffect(() => {
 
     localStorage.setItem(
@@ -88,11 +97,15 @@ const Dashboard = () => {
 
   }, [activityLogs]);
 
+  // UPLOAD
   const handleUpload = () => {
 
     if (!sheetName || !sheetLink) {
 
-      toast.error("Please fill all fields");
+      toast.error(
+        "Please fill all fields"
+      );
+
       return;
 
     }
@@ -109,8 +122,12 @@ const Dashboard = () => {
 
     };
 
-    setSheets([...sheets, newSheet]);
+    setSheets([
+      ...sheets,
+      newSheet
+    ]);
 
+    // ACTIVITY
     const newActivity = {
 
       id: Date.now(),
@@ -123,7 +140,8 @@ const Dashboard = () => {
 
       category: category,
 
-      time: new Date().toLocaleString()
+      time:
+        new Date().toLocaleString()
 
     };
 
@@ -135,18 +153,25 @@ const Dashboard = () => {
     setSheetName("");
     setSheetLink("");
 
-    toast.success("Sheet Uploaded");
+    toast.success(
+      "Sheet Uploaded"
+    );
 
   };
 
+  // CHECKBOX
   const handleCheckbox = (id) => {
 
-    if (selectedSheets.includes(id)) {
+    if (
+      selectedSheets.includes(id)
+    ) {
 
       setSelectedSheets(
+
         selectedSheets.filter(
           (item) => item !== id
         )
+
       );
 
     } else {
@@ -159,11 +184,17 @@ const Dashboard = () => {
     }
   };
 
+  // DELETE
   const handleDelete = () => {
 
-    if (selectedSheets.length === 0) {
+    if (
+      selectedSheets.length === 0
+    ) {
 
-      toast.error("Select Sheets First");
+      toast.error(
+        "Select Sheets First"
+      );
+
       return;
 
     }
@@ -178,25 +209,33 @@ const Dashboard = () => {
       const sheetsToDelete =
         sheets.filter(
           (sheet) =>
-            selectedSheets.includes(sheet.id)
+            selectedSheets.includes(
+              sheet.id
+            )
         );
 
       const deleteActivities =
-        sheetsToDelete.map((sheet) => ({
+        sheetsToDelete.map(
+          (sheet) => ({
 
-          id: Date.now() + Math.random(),
+            id:
+              Date.now() +
+              Math.random(),
 
-          action: "deleted",
+            action: "deleted",
 
-          user: loggedInUser,
+            user: loggedInUser,
 
-          sheet: sheet.name,
+            sheet: sheet.name,
 
-          category: sheet.category,
+            category:
+              sheet.category,
 
-          time: new Date().toLocaleString()
+            time:
+              new Date().toLocaleString()
 
-        }));
+          })
+        );
 
       setActivityLogs([
         ...deleteActivities,
@@ -206,7 +245,9 @@ const Dashboard = () => {
       const updatedSheets =
         sheets.filter(
           (sheet) =>
-            !selectedSheets.includes(sheet.id)
+            !selectedSheets.includes(
+              sheet.id
+            )
         );
 
       setSheets(updatedSheets);
@@ -215,11 +256,14 @@ const Dashboard = () => {
 
       setDeleteMode(false);
 
-      toast.success("Sheets Deleted");
+      toast.success(
+        "Sheets Deleted"
+      );
 
     }
   };
 
+  // LOGOUT
   const handleLogout = () => {
 
     localStorage.removeItem(
@@ -230,21 +274,28 @@ const Dashboard = () => {
 
   };
 
-  const filteredSheets = sheets.filter(
-    (sheet) =>
-      sheet.category === activeCategory
-  );
+  // FILTER
+  const filteredSheets =
+    sheets.filter(
+
+      (sheet) =>
+        sheet.category ===
+        activeCategory
+
+    );
 
   return (
     <>
+
       <Toaster position="top-right" />
 
       <div
         style={{
           ...styles.container,
-          flexDirection: isMobile
-            ? "column"
-            : "row"
+          flexDirection:
+            isMobile
+              ? "column"
+              : "row"
         }}
       >
 
@@ -253,9 +304,10 @@ const Dashboard = () => {
         <div
           style={{
             ...styles.sidebar,
-            width: isMobile
-              ? "100%"
-              : "230px"
+            width:
+              isMobile
+                ? "100%"
+                : "240px"
           }}
         >
 
@@ -272,9 +324,10 @@ const Dashboard = () => {
             <div
               style={{
                 ...styles.menu,
-                flexDirection: isMobile
-                  ? "row"
-                  : "column"
+                flexDirection:
+                  isMobile
+                    ? "row"
+                    : "column"
               }}
             >
 
@@ -289,13 +342,18 @@ const Dashboard = () => {
                   key={item}
 
                   style={
-                    activeCategory === item
+                    activeCategory ===
+                    item
+
                       ? styles.activeMenuItem
+
                       : styles.menuItem
                   }
 
                   onClick={() =>
-                    setActiveCategory(item)
+                    setActiveCategory(
+                      item
+                    )
                   }
                 >
                   {item}
@@ -321,9 +379,10 @@ const Dashboard = () => {
         <div
           style={{
             ...styles.main,
-            padding: isMobile
-              ? "15px"
-              : "22px"
+            padding:
+              isMobile
+                ? "15px"
+                : "22px"
           }}
         >
 
@@ -334,9 +393,10 @@ const Dashboard = () => {
             <h1
               style={{
                 ...styles.heading,
-                fontSize: isMobile
-                  ? "24px"
-                  : "32px"
+                fontSize:
+                  isMobile
+                    ? "22px"
+                    : "30px"
               }}
             >
               {activeCategory}
@@ -355,85 +415,110 @@ const Dashboard = () => {
 
           {/* DRAWER */}
 
-          <div
-            style={{
-              ...styles.drawer,
-              width: isMobile
-                ? "100%"
-                : "420px",
-              right: drawerOpen
-                ? "0"
-                : isMobile
-                ? "-100%"
-                : "-450px"
-            }}
-          >
+          {drawerOpen && (
 
-            <div style={styles.drawerTop}>
+            <div
+              style={{
+                ...styles.drawer,
+                width:
+                  isMobile
+                    ? "100%"
+                    : "400px"
+              }}
+            >
 
-              <h2>
-                Activity Logs
-              </h2>
+              <div
+                style={styles.drawerTop}
+              >
 
-              <button
-                style={styles.closeBtn}
-                onClick={() =>
-                  setDrawerOpen(false)
+                <h2>
+                  Activity Logs
+                </h2>
+
+                <button
+                  style={
+                    styles.closeBtn
+                  }
+
+                  onClick={() =>
+                    setDrawerOpen(
+                      false
+                    )
+                  }
+                >
+                  ✕
+                </button>
+
+              </div>
+
+              <div
+                style={
+                  styles.activityContainer
                 }
               >
-                ✕
-              </button>
+
+                {activityLogs.length ===
+                0 ? (
+
+                  <p>
+                    No Activity Yet
+                  </p>
+
+                ) : (
+
+                  activityLogs.map(
+                    (log) => (
+
+                      <div
+                        key={log.id}
+
+                        style={
+                          styles.activityCard
+                        }
+                      >
+
+                        <h4>
+                          {log.user}
+                        </h4>
+
+                        <p>
+                          {log.action}
+                          {" "}
+                          sheet:
+                        </p>
+
+                        <strong>
+                          {log.sheet}
+                        </strong>
+
+                        <p>
+                          Category:
+                          {" "}
+                          {
+                            log.category
+                          }
+                        </p>
+
+                        <small>
+                          {log.time}
+                        </small>
+
+                      </div>
+
+                    )
+                  )
+
+                )}
+
+              </div>
 
             </div>
 
-            <div style={styles.activityContainer}>
+          )}
 
-              {activityLogs.length === 0 ? (
+          {/* SHEET VIEWER */}
 
-                <p>No Activity Yet</p>
-
-              ) : (
-
-                activityLogs.map((log) => (
-
-                  <div
-                    key={log.id}
-                    style={styles.activityCard}
-                  >
-
-                    <h4>
-                      {log.user}
-                    </h4>
-
-                    <p>
-                      {log.action} sheet:
-                    </p>
-
-                    <strong>
-                      {log.sheet}
-                    </strong>
-
-                    <p>
-                      Category: {log.category}
-                    </p>
-
-                    <small>
-                      {log.time}
-                    </small>
-
-                  </div>
-
-                ))
-
-              )}
-
-            </div>
-
-          </div>
-
-          {/* VIEWER */}
-
-          {openedSheet && (
+          {openedSheet && !isMobile && (
 
             <div style={styles.viewerContainer}>
 
@@ -444,7 +529,10 @@ const Dashboard = () => {
                 </h3>
 
                 <button
-                  style={styles.closeSheetBtn}
+                  style={
+                    styles.closeSheetBtn
+                  }
+
                   onClick={() =>
                     setOpenedSheet(null)
                   }
@@ -457,12 +545,7 @@ const Dashboard = () => {
               <iframe
                 src={openedSheet.link}
                 title="sheet"
-                style={{
-                  ...styles.iframe,
-                  height: isMobile
-                    ? "300px"
-                    : "420px"
-                }}
+                style={styles.iframe}
               />
 
             </div>
@@ -473,7 +556,11 @@ const Dashboard = () => {
 
           <div style={styles.uploadCard}>
 
-            <h2 style={styles.sectionTitle}>
+            <h2
+              style={
+                styles.sectionTitle
+              }
+            >
               Upload New Sheet
             </h2>
 
@@ -482,8 +569,11 @@ const Dashboard = () => {
               placeholder="Enter Sheet Name"
               value={sheetName}
               onChange={(e) =>
-                setSheetName(e.target.value)
+                setSheetName(
+                  e.target.value
+                )
               }
+
               style={styles.input}
             />
 
@@ -492,16 +582,23 @@ const Dashboard = () => {
               placeholder="Paste Google Sheet Link"
               value={sheetLink}
               onChange={(e) =>
-                setSheetLink(e.target.value)
+                setSheetLink(
+                  e.target.value
+                )
               }
+
               style={styles.input}
             />
 
             <select
               style={styles.input}
+
               value={category}
+
               onChange={(e) =>
-                setCategory(e.target.value)
+                setCategory(
+                  e.target.value
+                )
               }
             >
 
@@ -525,6 +622,7 @@ const Dashboard = () => {
 
             <button
               style={styles.uploadBtn}
+
               onClick={handleUpload}
             >
               Upload Sheet
@@ -538,20 +636,30 @@ const Dashboard = () => {
 
             <button
               style={styles.deleteBtn}
+
               onClick={() =>
-                setDeleteMode(!deleteMode)
+                setDeleteMode(
+                  !deleteMode
+                )
               }
             >
+
               {deleteMode
                 ? "Cancel"
                 : "Delete Mode"}
+
             </button>
 
             {deleteMode && (
 
               <button
-                style={styles.confirmBtn}
-                onClick={handleDelete}
+                style={
+                  styles.confirmBtn
+                }
+
+                onClick={
+                  handleDelete
+                }
               >
                 Delete Selected
               </button>
@@ -565,66 +673,111 @@ const Dashboard = () => {
           <div
             style={{
               ...styles.grid,
+
               gridTemplateColumns:
                 isMobile
+
                   ? "1fr"
+
                   : "repeat(auto-fit,minmax(220px,1fr))"
             }}
           >
 
-            {filteredSheets.length === 0 ? (
+            {filteredSheets.length ===
+            0 ? (
 
-              <div style={styles.emptyCard}>
+              <div
+                style={
+                  styles.emptyCard
+                }
+              >
                 No Sheets Available
               </div>
 
             ) : (
 
-              filteredSheets.map((sheet) => (
+              filteredSheets.map(
+                (sheet) => (
 
-                <div
-                  key={sheet.id}
-                  style={styles.sheetCard}
-                >
+                  <div
+                    key={sheet.id}
 
-                  {deleteMode && (
-
-                    <input
-                      type="checkbox"
-                      style={styles.checkbox}
-                      checked={
-                        selectedSheets.includes(
-                          sheet.id
-                        )
-                      }
-
-                      onChange={() =>
-                        handleCheckbox(sheet.id)
-                      }
-                    />
-
-                  )}
-
-                  <div style={styles.fileIcon}>
-                    📊
-                  </div>
-
-                  <h3 style={styles.sheetName}>
-                    {sheet.name}
-                  </h3>
-
-                  <button
-                    style={styles.openBtn}
-                    onClick={() =>
-                      setOpenedSheet(sheet)
+                    style={
+                      styles.sheetCard
                     }
                   >
-                    Open Sheet
-                  </button>
 
-                </div>
+                    {deleteMode && (
 
-              ))
+                      <input
+                        type="checkbox"
+
+                        style={
+                          styles.checkbox
+                        }
+
+                        checked={
+                          selectedSheets.includes(
+                            sheet.id
+                          )
+                        }
+
+                        onChange={() =>
+                          handleCheckbox(
+                            sheet.id
+                          )
+                        }
+                      />
+
+                    )}
+
+                    <div
+                      style={
+                        styles.fileIcon
+                      }
+                    >
+                      📊
+                    </div>
+
+                    <h3
+                      style={
+                        styles.sheetName
+                      }
+                    >
+                      {sheet.name}
+                    </h3>
+
+                    <button
+                      style={
+                        styles.openBtn
+                      }
+
+                      onClick={() => {
+
+                        if (isMobile) {
+
+                          window.open(
+                            sheet.link,
+                            "_blank"
+                          );
+
+                        } else {
+
+                          setOpenedSheet(
+                            sheet
+                          );
+
+                        }
+
+                      }}
+                    >
+                      Open Sheet
+                    </button>
+
+                  </div>
+
+                )
+              )
 
             )}
 
@@ -633,6 +786,7 @@ const Dashboard = () => {
         </div>
 
       </div>
+
     </>
   );
 };
@@ -676,7 +830,8 @@ const styles = {
     padding: "12px",
     borderRadius: "12px",
     cursor: "pointer",
-    background: "rgba(255,255,255,0.15)",
+    background:
+      "rgba(255,255,255,0.15)",
     minWidth: "140px"
   },
 
@@ -733,7 +888,7 @@ const styles = {
     background: "white",
     position: "fixed",
     top: 0,
-    transition: "0.4s",
+    right: 0,
     boxShadow:
       "-5px 0 20px rgba(0,0,0,0.1)",
     zIndex: 1000,
@@ -771,17 +926,19 @@ const styles = {
     padding: "18px",
     borderRadius: "18px",
     marginBottom: "20px",
-    boxShadow: "0 5px 20px rgba(0,0,0,0.08)"
+    boxShadow:
+      "0 5px 20px rgba(0,0,0,0.08)"
   },
 
   viewerTop: {
     display: "flex",
     justifyContent: "space-between",
+    alignItems: "center",
     marginBottom: "15px"
   },
 
   closeSheetBtn: {
-    padding: "8px 15px",
+    padding: "10px 16px",
     border: "none",
     borderRadius: "10px",
     background: "#ff3b30",
@@ -791,6 +948,7 @@ const styles = {
 
   iframe: {
     width: "100%",
+    height: "600px",
     border: "none",
     borderRadius: "12px"
   },
@@ -800,7 +958,8 @@ const styles = {
     padding: "18px",
     borderRadius: "18px",
     marginBottom: "20px",
-    boxShadow: "0 5px 20px rgba(0,0,0,0.08)"
+    boxShadow:
+      "0 5px 20px rgba(0,0,0,0.08)"
   },
 
   sectionTitle: {
@@ -862,7 +1021,8 @@ const styles = {
     padding: "18px",
     textAlign: "center",
     position: "relative",
-    boxShadow: "0 5px 20px rgba(0,0,0,0.08)"
+    boxShadow:
+      "0 5px 20px rgba(0,0,0,0.08)"
   },
 
   checkbox: {
