@@ -46,7 +46,7 @@ const Login = () => {
 
       <div style={styles.container}>
 
-        {/* LEFT SIDE */}
+        {/* LEFT SIDEE */}
 
         <div style={styles.leftSection}>
 
