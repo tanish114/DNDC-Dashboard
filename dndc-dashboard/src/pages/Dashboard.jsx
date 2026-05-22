@@ -30,7 +30,8 @@ const Dashboard = () => {
 
   const [drawerOpen, setDrawerOpen] =
     useState(false);
-
+const [isMobile, setIsMobile] =
+  useState(window.innerWidth < 768);
   // SHEETS
   const [sheets, setSheets] = useState(() => {
 
@@ -60,6 +61,25 @@ const Dashboard = () => {
 
   }, [sheets]);
 
+
+  useEffect(() => {
+
+  const handleResize = () => {
+    setIsMobile(window.innerWidth < 768);
+  };
+
+  window.addEventListener(
+    "resize",
+    handleResize
+  );
+
+  return () =>
+    window.removeEventListener(
+      "resize",
+      handleResize
+    );
+
+}, []);
   // SAVE ACTIVITY
   useEffect(() => {
 
@@ -578,22 +598,26 @@ const Dashboard = () => {
 const styles = {
 
   container: {
-    display: "flex",
+    display: isMobile ? "block" : "flex",
     minHeight: "100vh",
     background: "#f8f9fc",
     fontFamily: "Arial"
   },
 
   sidebar: {
-    width: "200px",
-    background:
-      "linear-gradient(180deg,#ff7b00,#ff9500)",
-    padding: "30px",
-    color: "white",
-    display: "flex",
-    flexDirection: "column",
-    justifyContent: "space-between"
-  },
+  width: isMobile ? "100%" : "420px",
+  background:
+    "linear-gradient(180deg,#ff7b00,#ff9500)",
+  padding: isMobile ? "15px" : "30px",
+  color: "white",
+  display: "flex",
+  flexDirection: isMobile
+    ? "row"
+    : "column",
+  justifyContent: "space-between",
+  gap: "15px",
+  overflowX: "auto"
+},
 
   logo: {
     fontSize: "28px",
@@ -605,10 +629,13 @@ const styles = {
   },
 
   menu: {
-    display: "flex",
-    flexDirection: "column",
-    gap: "15px"
-  },
+  display: "flex",
+  flexDirection: isMobile
+    ? "row"
+    : "column",
+  gap: "10px",
+  overflowX: "auto"
+},
 
   menuItem: {
     padding: "12px",
@@ -637,10 +664,10 @@ const styles = {
   },
 
   main: {
-    flex: 1,
-    padding: "22px",
-    position: "relative"
-  },
+  flex: 1,
+  padding: isMobile ? "15px" : "22px",
+  position: "relative"
+},
 
   topbar: {
     display: "flex",
@@ -728,7 +755,7 @@ const styles = {
 
   iframe: {
     width: "100%",
-    height: "420px",
+    height: isMobile ? "300px" : "420px",
     border: "none",
     borderRadius: "12px"
   },
@@ -792,7 +819,9 @@ const styles = {
   grid: {
     display: "grid",
     gridTemplateColumns:
-      "repeat(auto-fit,minmax(220px,1fr))",
+  isMobile
+    ? "1fr"
+    : "repeat(auto-fit,minmax(220px,1fr))",
     gap: "25px"
   },
 

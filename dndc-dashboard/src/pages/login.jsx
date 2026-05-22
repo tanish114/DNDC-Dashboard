@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import users from "../data/users.json";
 import toast, { Toaster } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
@@ -8,7 +8,29 @@ const Login = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
+  const [isMobile, setIsMobile] =
+    useState(window.innerWidth < 768);
+
   const navigate = useNavigate();
+
+  useEffect(() => {
+
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+
+    window.addEventListener(
+      "resize",
+      handleResize
+    );
+
+    return () =>
+      window.removeEventListener(
+        "resize",
+        handleResize
+      );
+
+  }, []);
 
   const handleLogin = (e) => {
 
@@ -44,26 +66,65 @@ const Login = () => {
     <>
       <Toaster position="top-right" />
 
-      <div style={styles.container}>
+      <div
+        style={{
+          ...styles.container,
+          flexDirection: isMobile
+            ? "column"
+            : "row"
+        }}
+      >
 
-        {/* LEFT SIDEE */}
+        {/* LEFT */}
 
-        <div style={styles.leftSection}>
+        <div
+          style={{
+            ...styles.leftSection,
+            minHeight: isMobile
+              ? "35vh"
+              : "100vh"
+          }}
+        >
 
           <div style={styles.overlay}></div>
 
-          <div style={styles.leftContent}>
+          <div
+            style={{
+              ...styles.leftContent,
+              width: isMobile
+                ? "90%"
+                : "70%",
+              textAlign: isMobile
+                ? "center"
+                : "left"
+            }}
+          >
 
             <div style={styles.logoBox}>
               DNDC
             </div>
 
-            <h1 style={styles.brandTitle}>
+            <h1
+              style={{
+                ...styles.brandTitle,
+                fontSize: isMobile
+                  ? "34px"
+                  : "55px"
+              }}
+            >
               Teacher Dashboard
             </h1>
 
-            <p style={styles.brandText}>
-              Manage Google Sheets, Uploads and Teacher Data
+            <p
+              style={{
+                ...styles.brandText,
+                fontSize: isMobile
+                  ? "15px"
+                  : "20px"
+              }}
+            >
+              Manage Google Sheets,
+              Uploads and Teacher Data
               in one centralized dashboard.
             </p>
 
@@ -71,13 +132,27 @@ const Login = () => {
 
         </div>
 
-        {/* RIGHT SIDE */}
+        {/* RIGHT */}
 
         <div style={styles.rightSection}>
 
-          <div style={styles.card}>
+          <div
+            style={{
+              ...styles.card,
+              padding: isMobile
+                ? "30px 20px"
+                : "50px"
+            }}
+          >
 
-            <h2 style={styles.loginTitle}>
+            <h2
+              style={{
+                ...styles.loginTitle,
+                fontSize: isMobile
+                  ? "28px"
+                  : "38px"
+              }}
+            >
               Welcome Back 👋
             </h2>
 
@@ -97,7 +172,9 @@ const Login = () => {
                   type="email"
                   placeholder="Enter Username"
                   value={username}
-                  onChange={(e) => setUsername(e.target.value)}
+                  onChange={(e) =>
+                    setUsername(e.target.value)
+                  }
                   style={styles.input}
                 />
 
@@ -113,7 +190,9 @@ const Login = () => {
                   type="password"
                   placeholder="Enter Password"
                   value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                  onChange={(e) =>
+                    setPassword(e.target.value)
+                  }
                   style={styles.input}
                 />
 
@@ -159,45 +238,40 @@ const styles = {
   },
 
   overlay: {
-    width: "700px",
-    height: "700px",
+    width: "500px",
+    height: "500px",
     borderRadius: "50%",
     background: "rgba(255,255,255,0.08)",
     position: "absolute",
-    top: "-200px",
-    right: "-200px"
+    top: "-100px",
+    right: "-100px"
   },
 
   leftContent: {
-    width: "70%",
     color: "white",
     zIndex: 2
   },
 
   logoBox: {
-    width: "90px",
-    height: "90px",
-    borderRadius: "20px",
+    width: "80px",
+    height: "80px",
+    borderRadius: "18px",
     background: "white",
     color: "#ff7b00",
-    fontSize: "30px",
+    fontSize: "26px",
     fontWeight: "bold",
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
-    marginBottom: "30px",
-    boxShadow: "0 10px 30px rgba(0,0,0,0.15)"
+    marginBottom: "25px"
   },
 
   brandTitle: {
-    fontSize: "55px",
-    marginBottom: "20px",
+    marginBottom: "15px",
     lineHeight: "1.2"
   },
 
   brandText: {
-    fontSize: "20px",
-    opacity: 0.95,
     lineHeight: "1.7"
   },
 
@@ -206,65 +280,59 @@ const styles = {
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
-    padding: "40px"
+    padding: "20px"
   },
 
   card: {
     width: "100%",
-    maxWidth: "460px",
+    maxWidth: "430px",
     background: "white",
-    padding: "50px",
-    borderRadius: "30px",
-    boxShadow: "0 10px 40px rgba(0,0,0,0.08)"
+    borderRadius: "25px",
+    boxShadow:
+      "0 10px 40px rgba(0,0,0,0.08)"
   },
 
   loginTitle: {
-    fontSize: "38px",
     color: "#222",
     marginBottom: "10px"
   },
 
   loginSub: {
     color: "#777",
-    marginBottom: "40px",
-    fontSize: "16px"
+    marginBottom: "30px"
   },
 
   inputGroup: {
-    marginBottom: "25px"
+    marginBottom: "20px"
   },
 
   label: {
     display: "block",
-    marginBottom: "10px",
+    marginBottom: "8px",
     color: "#444",
     fontWeight: "600"
   },
 
   input: {
     width: "100%",
-    padding: "17px",
-    borderRadius: "14px",
-    border: "1px solid #e2e2e2",
+    padding: "14px",
+    borderRadius: "12px",
+    border: "1px solid #ddd",
     background: "#fafafa",
-    outline: "none",
-    fontSize: "15px",
-    transition: "0.3s"
+    outline: "none"
   },
 
   button: {
     width: "100%",
-    padding: "18px",
+    padding: "15px",
     border: "none",
-    borderRadius: "14px",
+    borderRadius: "12px",
     background:
       "linear-gradient(135deg,#ff7b00,#ff9500)",
     color: "white",
-    fontSize: "17px",
+    fontSize: "16px",
     fontWeight: "bold",
-    cursor: "pointer",
-    marginTop: "10px",
-    boxShadow: "0 10px 25px rgba(255,123,0,0.3)"
+    cursor: "pointer"
   }
 
 };
