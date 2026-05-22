@@ -751,25 +751,39 @@ const Dashboard = () => {
                       style={
                         styles.openBtn
                       }
+onClick={() => {
 
-                      onClick={() => {
+  // MOBILE
+  if (isMobile) {
 
-                        if (isMobile) {
+    let mobileLink = sheet.link;
 
-                          window.open(
-                            sheet.link,
-                            "_blank"
-                          );
+    // Convert edit URL properly
+    if (
+      mobileLink.includes("/edit")
+    ) {
 
-                        } else {
+      mobileLink =
+        mobileLink.split("/edit")[0] +
+        "/edit?usp=sharing";
 
-                          setOpenedSheet(
-                            sheet
-                          );
+    }
 
-                        }
+    window.open(
+      mobileLink,
+      "_blank"
+    );
 
-                      }}
+  }
+
+  // DESKTOP
+  else {
+
+    setOpenedSheet(sheet);
+
+  }
+
+}}
                     >
                       Open Sheet
                     </button>
