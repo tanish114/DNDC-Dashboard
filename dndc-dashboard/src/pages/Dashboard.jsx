@@ -6,6 +6,9 @@ const Dashboard = () => {
   const loggedInUser =
     localStorage.getItem("loggedInUser");
 
+  const [isMobile, setIsMobile] =
+    useState(window.innerWidth < 768);
+
   const storageKey = "globalSheets";
 
   const activityKey = "activityLogs";
@@ -30,9 +33,7 @@ const Dashboard = () => {
 
   const [drawerOpen, setDrawerOpen] =
     useState(false);
-const [isMobile, setIsMobile] =
-  useState(window.innerWidth < 768);
-  // SHEETS
+
   const [sheets, setSheets] = useState(() => {
 
     return JSON.parse(
@@ -41,7 +42,6 @@ const [isMobile, setIsMobile] =
 
   });
 
-  // ACTIVITY LOGS
   const [activityLogs, setActivityLogs] =
     useState(() => {
 
@@ -51,7 +51,25 @@ const [isMobile, setIsMobile] =
 
     });
 
-  // SAVE SHEETS
+  useEffect(() => {
+
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+
+    window.addEventListener(
+      "resize",
+      handleResize
+    );
+
+    return () =>
+      window.removeEventListener(
+        "resize",
+        handleResize
+      );
+
+  }, []);
+
   useEffect(() => {
 
     localStorage.setItem(
@@ -61,26 +79,6 @@ const [isMobile, setIsMobile] =
 
   }, [sheets]);
 
-
-  useEffect(() => {
-
-  const handleResize = () => {
-    setIsMobile(window.innerWidth < 768);
-  };
-
-  window.addEventListener(
-    "resize",
-    handleResize
-  );
-
-  return () =>
-    window.removeEventListener(
-      "resize",
-      handleResize
-    );
-
-}, []);
-  // SAVE ACTIVITY
   useEffect(() => {
 
     localStorage.setItem(
@@ -90,7 +88,6 @@ const [isMobile, setIsMobile] =
 
   }, [activityLogs]);
 
-  // UPLOAD
   const handleUpload = () => {
 
     if (!sheetName || !sheetLink) {
@@ -114,7 +111,6 @@ const [isMobile, setIsMobile] =
 
     setSheets([...sheets, newSheet]);
 
-    // ACTIVITY
     const newActivity = {
 
       id: Date.now(),
@@ -143,7 +139,6 @@ const [isMobile, setIsMobile] =
 
   };
 
-  // CHECKBOX
   const handleCheckbox = (id) => {
 
     if (selectedSheets.includes(id)) {
@@ -164,7 +159,6 @@ const [isMobile, setIsMobile] =
     }
   };
 
-  // DELETE
   const handleDelete = () => {
 
     if (selectedSheets.length === 0) {
@@ -187,7 +181,6 @@ const [isMobile, setIsMobile] =
             selectedSheets.includes(sheet.id)
         );
 
-      // ACTIVITY LOGS
       const deleteActivities =
         sheetsToDelete.map((sheet) => ({
 
@@ -227,7 +220,6 @@ const [isMobile, setIsMobile] =
     }
   };
 
-  // LOGOUT
   const handleLogout = () => {
 
     localStorage.removeItem(
@@ -238,7 +230,6 @@ const [isMobile, setIsMobile] =
 
   };
 
-  // FILTERED SHEETS
   const filteredSheets = sheets.filter(
     (sheet) =>
       sheet.category === activeCategory
@@ -246,14 +237,27 @@ const [isMobile, setIsMobile] =
 
   return (
     <>
-
       <Toaster position="top-right" />
 
-      <div style={styles.container}>
+      <div
+        style={{
+          ...styles.container,
+          flexDirection: isMobile
+            ? "column"
+            : "row"
+        }}
+      >
 
         {/* SIDEBAR */}
 
-        <div style={styles.sidebar}>
+        <div
+          style={{
+            ...styles.sidebar,
+            width: isMobile
+              ? "100%"
+              : "230px"
+          }}
+        >
 
           <div>
 
@@ -265,7 +269,14 @@ const [isMobile, setIsMobile] =
               {loggedInUser}
             </p>
 
-            <div style={styles.menu}>
+            <div
+              style={{
+                ...styles.menu,
+                flexDirection: isMobile
+                  ? "row"
+                  : "column"
+              }}
+            >
 
               {[
                 "Attendance Sheet",
@@ -307,13 +318,27 @@ const [isMobile, setIsMobile] =
 
         {/* MAIN */}
 
-        <div style={styles.main}>
+        <div
+          style={{
+            ...styles.main,
+            padding: isMobile
+              ? "15px"
+              : "22px"
+          }}
+        >
 
           {/* TOPBAR */}
 
           <div style={styles.topbar}>
 
-            <h1 style={styles.heading}>
+            <h1
+              style={{
+                ...styles.heading,
+                fontSize: isMobile
+                  ? "24px"
+                  : "32px"
+              }}
+            >
               {activeCategory}
             </h1>
 
@@ -333,7 +358,14 @@ const [isMobile, setIsMobile] =
           <div
             style={{
               ...styles.drawer,
-              right: drawerOpen ? "0" : "-450px"
+              width: isMobile
+                ? "100%"
+                : "420px",
+              right: drawerOpen
+                ? "0"
+                : isMobile
+                ? "-100%"
+                : "-450px"
             }}
           >
 
@@ -382,9 +414,7 @@ const [isMobile, setIsMobile] =
                     </strong>
 
                     <p>
-                      Category:
-                      {" "}
-                      {log.category}
+                      Category: {log.category}
                     </p>
 
                     <small>
@@ -401,7 +431,7 @@ const [isMobile, setIsMobile] =
 
           </div>
 
-          {/* SHEET VIEWER */}
+          {/* VIEWER */}
 
           {openedSheet && (
 
@@ -427,7 +457,12 @@ const [isMobile, setIsMobile] =
               <iframe
                 src={openedSheet.link}
                 title="sheet"
-                style={styles.iframe}
+                style={{
+                  ...styles.iframe,
+                  height: isMobile
+                    ? "300px"
+                    : "420px"
+                }}
               />
 
             </div>
@@ -527,7 +562,15 @@ const [isMobile, setIsMobile] =
 
           {/* GRID */}
 
-          <div style={styles.grid}>
+          <div
+            style={{
+              ...styles.grid,
+              gridTemplateColumns:
+                isMobile
+                  ? "1fr"
+                  : "repeat(auto-fit,minmax(220px,1fr))"
+            }}
+          >
 
             {filteredSheets.length === 0 ? (
 
@@ -590,7 +633,6 @@ const [isMobile, setIsMobile] =
         </div>
 
       </div>
-
     </>
   );
 };
@@ -598,50 +640,44 @@ const [isMobile, setIsMobile] =
 const styles = {
 
   container: {
-    display: isMobile ? "block" : "flex",
+    display: "flex",
     minHeight: "100vh",
     background: "#f8f9fc",
     fontFamily: "Arial"
   },
 
   sidebar: {
-  width: isMobile ? "100%" : "420px",
-  background:
-    "linear-gradient(180deg,#ff7b00,#ff9500)",
-  padding: isMobile ? "15px" : "30px",
-  color: "white",
-  display: "flex",
-  flexDirection: isMobile
-    ? "row"
-    : "column",
-  justifyContent: "space-between",
-  gap: "15px",
-  overflowX: "auto"
-},
+    background:
+      "linear-gradient(180deg,#ff7b00,#ff9500)",
+    padding: "20px",
+    color: "white",
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "space-between",
+    gap: "15px"
+  },
 
   logo: {
     fontSize: "28px",
-    marginBottom: "20px"
+    marginBottom: "15px"
   },
 
   user: {
-    marginBottom: "22px"
+    marginBottom: "20px"
   },
 
   menu: {
-  display: "flex",
-  flexDirection: isMobile
-    ? "row"
-    : "column",
-  gap: "10px",
-  overflowX: "auto"
-},
+    display: "flex",
+    gap: "10px",
+    overflowX: "auto"
+  },
 
   menuItem: {
     padding: "12px",
     borderRadius: "12px",
     cursor: "pointer",
-    background: "rgba(255,255,255,0.1)"
+    background: "rgba(255,255,255,0.15)",
+    minWidth: "140px"
   },
 
   activeMenuItem: {
@@ -650,34 +686,35 @@ const styles = {
     background: "white",
     color: "#ff7b00",
     fontWeight: "bold",
-    cursor: "pointer"
+    cursor: "pointer",
+    minWidth: "140px"
   },
 
   logoutBtn: {
-    padding: "15px",
+    padding: "12px",
     border: "none",
     borderRadius: "12px",
     background: "white",
     color: "#ff7b00",
     fontWeight: "bold",
-    cursor: "pointer"
+    cursor: "pointer",
+    marginTop: "20px"
   },
 
   main: {
-  flex: 1,
-  padding: isMobile ? "15px" : "22px",
-  position: "relative"
-},
+    flex: 1,
+    position: "relative"
+  },
 
   topbar: {
     display: "flex",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: "30px"
+    marginBottom: "20px"
   },
 
   heading: {
-    fontSize: "38px"
+    color: "#222"
   },
 
   activityBtn: {
@@ -692,7 +729,6 @@ const styles = {
   },
 
   drawer: {
-    width: "420px",
     height: "100vh",
     background: "white",
     position: "fixed",
@@ -701,14 +737,14 @@ const styles = {
     boxShadow:
       "-5px 0 20px rgba(0,0,0,0.1)",
     zIndex: 1000,
-    padding: "25px",
+    padding: "20px",
     overflowY: "auto"
   },
 
   drawerTop: {
     display: "flex",
     justifyContent: "space-between",
-    marginBottom: "25px"
+    marginBottom: "20px"
   },
 
   closeBtn: {
@@ -721,31 +757,31 @@ const styles = {
   activityContainer: {
     display: "flex",
     flexDirection: "column",
-    gap: "15px"
+    gap: "12px"
   },
 
   activityCard: {
     background: "#fff7f0",
-    padding: "18px",
-    borderRadius: "14px"
+    padding: "15px",
+    borderRadius: "12px"
   },
 
   viewerContainer: {
     background: "white",
-    padding: "20px",
-    borderRadius: "20px",
-    marginBottom: "30px",
+    padding: "18px",
+    borderRadius: "18px",
+    marginBottom: "20px",
     boxShadow: "0 5px 20px rgba(0,0,0,0.08)"
   },
 
   viewerTop: {
     display: "flex",
     justifyContent: "space-between",
-    marginBottom: "20px"
+    marginBottom: "15px"
   },
 
   closeSheetBtn: {
-    padding: "10px 18px",
+    padding: "8px 15px",
     border: "none",
     borderRadius: "10px",
     background: "#ff3b30",
@@ -755,34 +791,33 @@ const styles = {
 
   iframe: {
     width: "100%",
-    height: isMobile ? "300px" : "420px",
     border: "none",
     borderRadius: "12px"
   },
 
   uploadCard: {
     background: "white",
-    padding: "20px",
-    borderRadius: "20px",
-    marginBottom: "25px",
+    padding: "18px",
+    borderRadius: "18px",
+    marginBottom: "20px",
     boxShadow: "0 5px 20px rgba(0,0,0,0.08)"
   },
 
   sectionTitle: {
-    marginBottom: "20px"
+    marginBottom: "18px"
   },
 
   input: {
     width: "100%",
     padding: "12px",
-    marginBottom: "18px",
+    marginBottom: "15px",
     borderRadius: "12px",
     border: "1px solid #ddd",
     background: "#fafafa"
   },
 
   uploadBtn: {
-    padding: "12px 20px",
+    padding: "12px 18px",
     border: "none",
     borderRadius: "12px",
     background:
@@ -795,11 +830,11 @@ const styles = {
   actionBar: {
     display: "flex",
     gap: "10px",
-    marginBottom: "30px"
+    marginBottom: "20px"
   },
 
   deleteBtn: {
-    padding: "14px 24px",
+    padding: "12px 18px",
     border: "none",
     borderRadius: "12px",
     background: "#222",
@@ -808,7 +843,7 @@ const styles = {
   },
 
   confirmBtn: {
-    padding: "14px 24px",
+    padding: "12px 18px",
     border: "none",
     borderRadius: "12px",
     background: "#ff3b30",
@@ -818,17 +853,13 @@ const styles = {
 
   grid: {
     display: "grid",
-    gridTemplateColumns:
-  isMobile
-    ? "1fr"
-    : "repeat(auto-fit,minmax(220px,1fr))",
-    gap: "25px"
+    gap: "18px"
   },
 
   sheetCard: {
     background: "white",
-    borderRadius: "20px",
-    padding: "20px",
+    borderRadius: "18px",
+    padding: "18px",
     textAlign: "center",
     position: "relative",
     boxShadow: "0 5px 20px rgba(0,0,0,0.08)"
@@ -836,22 +867,22 @@ const styles = {
 
   checkbox: {
     position: "absolute",
-    top: "18px",
-    left: "18px",
-    transform: "scale(1.4)"
+    top: "15px",
+    left: "15px",
+    transform: "scale(1.3)"
   },
 
   fileIcon: {
-    fontSize: "40px",
-    marginBottom: "20px"
+    fontSize: "38px",
+    marginBottom: "15px"
   },
 
   sheetName: {
-    marginBottom: "20px"
+    marginBottom: "15px"
   },
 
   openBtn: {
-    padding: "14px 24px",
+    padding: "12px 18px",
     border: "none",
     borderRadius: "12px",
     background:
@@ -863,8 +894,8 @@ const styles = {
 
   emptyCard: {
     background: "white",
-    padding: "40px",
-    borderRadius: "20px",
+    padding: "30px",
+    borderRadius: "18px",
     textAlign: "center"
   }
 
